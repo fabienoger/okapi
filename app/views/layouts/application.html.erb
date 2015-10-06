@@ -1,17 +1,49 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
   <head>
     <title>Okapi</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <%= csrf_meta_tags %>
   </head>
   <body>
     <header>
+      <nav>
+        <div class="nav-wrapper red accent-4">
+          <a class="brand-logo right" href="/">Okapi</a>
+          <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
+          <ul id="nav-mobile" class="left hide-on-med-and-down">
+            <% if user_signed_in? %>
+              <li><a href="/">Home</a></li>
+              <li><a href="/">Home</a></li>
+              <li><%= link_to current_user.name, edit_user_registration_path %></li>
+              <li><a rel="nofollow" data-method="delete" href="/users/sign_out">Log out</a></li>
+            <% else %>
+              <li><a href="/users/sign_up">Sign up</a></li>
+              <li><a href="/users/sign_in">Login</a></li>
+            <% end %>
+          </ul>
+          <ul class="side-nav" id="mobile-demo">
+            <li><a href="/">Home</a></li>
+            <li><a href="/">Home</a></li>
+          </ul>
+        </div>
+      </nav>
     </header>
     <main class="container">
       <div class="row">
-        <p class="notice"><%= notice %></p>
-        <p class="alert"><%= alert %></p>
+        <% if notice %>
+          <div class="card-panel">
+            <span class="notice light-blue-text accent-3"><%= notice %></span>
+          </div>
+        <% end %>
+        <% if alert %>
+          <div class="card-panel">
+            <span class="alert light-blue-text accent-3"><%= alert %></span>
+          </div>
+        <% end %>
         <%= yield %>
       </div>
     </main>
