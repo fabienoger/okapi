@@ -81,5 +81,3 @@ test:
 production:
   <<: *default
   database: okapi_production
-  username: okapi
-  password: <%= ENV['OKAPI_DATABASE_PASSWORD'] %>
