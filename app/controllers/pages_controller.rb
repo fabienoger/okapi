@@ -12,29 +12,35 @@ class PagesController < ApplicationController
       @result = Keyword.where(['keyword LIKE ?', "%#{params[:search]}%"])
       if @result.length > 0
         # Algo nuage de mots clés
-      else
+      else @result.length < 0
         # Request API
+        puts 'Go API !!'
         url = URI.parse("http://bayard.simplon.co/articles.json?by_keyword=#{params[:search]}")
         @request = Net::HTTP.get(url)
-        @request = JSON.parse(@request)
-        @request.each do |r|
-          r['keywords'].each do |word|
-            if params[:search] == word
-              keyword = Keyword.new
-              keyword.keyword = word
-              if keyword.save
-                flash[:success] = "Un Keyword a bien été récupéré dans l'API !"
+        puts @request.length
+        if @request.length > 2
+          @request = JSON.parse(@request)
+          flag = false
+          @request.each do |r|
+            r['keywords'].each do |word|
+              if params[:search] == word && flag == false
+                keyword = Keyword.new
+                keyword.keyword = word
+                if keyword.save
+                  flag = true
+                  flash[:success] = "Un Keyword a bien été récupéré dans l'API !"
+                  break
+                else
+                  flash[:error] = "Oops ! Something went wrong ! :p"
+                end
               else
-                flash[:error] = "Oops ! Something went wrong ! :p"
+                puts word
               end
-            else
-              puts word
             end
           end
+        else
+          puts 'go Google!'
         end
-        puts "==============================="
-        puts @request
-        puts "==============================="
       end
     else
 
