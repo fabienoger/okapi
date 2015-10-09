@@ -10,7 +10,11 @@
       <%= form_tag "/keyword/#{keyword.id}/mark", method: "post" do%>
           <% 5.times do |iteration| %>
             <input type="hidden" name="keyword_id" value="<%= keyword.id %>">
+            <% if keyword.keyword_mark.where(:user_id => current_user).length > 0 && keyword.keyword_mark.where(:user_id => current_user).first.note == iteration + 1 %>
+              <input type="submit" class="btn-floating blue accent-4" class="keyword-mark" name="note" value="<%= iteration+1 %>" />
+            <% else %>
             <input type="submit" class="btn-floating red accent-4" class="keyword-mark" name="note" value="<%= iteration+1 %>" />
+            <% end %>
           <% end %>
       <% end %>
     </li>
