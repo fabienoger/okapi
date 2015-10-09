@@ -1,0 +1,33 @@
+body {
+  background-image: url(/assets/grey_wash_wall.png);
+  main.container {
+    background-color: #FFF;
+    margin-top: 40px;
+    margin-bottom: 40px;
+    padding: 20px;
+   .input label {
+     color: #ee6e73;
+   }
+   .input input[type=text]:focus + label {
+     color: #ee6e73;
+   }
+    .input[type=text]:focus:not([readonly]) {
+      border-bottom: 1px solid #ee6e73;
+    }
+   .input input[type=text]:focus {
+     border-bottom: 1px solid #ee6e73;
+     box-shadow: 0 1px 0 0 #ee6e73;
+   }
+   .input input[type=text].valid {
+     border-bottom: 1px solid #ee6e73;
+     box-shadow: 0 1px 0 0 #ee6e73;
+   }
+   .input input[type=text].invalid {
+     border-bottom: 1px solid #ee6e73;
+     box-shadow: 0 1px 0 0 #ee6e73;
+   }
+   .input .prefix.active {
+     color: #ee6e73;
+   }
+  }
+}

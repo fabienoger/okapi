@@ -1,16 +1,16 @@
 <%= form_tag '/search', method: 'post', class: "col s10 offset-s1 m10 offset-m1 l10 offset-l1" do %>
   <input type="text" name="search" placeholder="Mot clé" />
-  <input type="submit" value="Rechercher" class="btn red darken-1" />
+  <input type="submit" value="Rechercher" class="btn red accent-4" />
 <% end %>
 
-<ul class="col s10 offset-s1 m10 offset-m1 l10 offset-l1 ">
+<ul class="col s10 offset-s1 m10 offset-m1 l10 offset-l1">
   <% @keywords.each do |keyword| %>
     <li>
       <p><%= keyword.keyword %></p>
       <%= form_tag "/keyword/#{keyword.id}/mark", method: "post" do%>
           <% 5.times do |iteration| %>
             <input type="hidden" name="keyword_id" value="<%= keyword.id %>">
-            <input type="submit" name="note" value="<%= iteration+1 %>" class="blue"/>
+            <input type="submit" class="btn-floating red accent-4" class="keyword-mark" name="note" value="<%= iteration+1 %>" />
           <% end %>
       <% end %>
     </li>

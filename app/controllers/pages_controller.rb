@@ -1,4 +1,7 @@
 class PagesController < ApplicationController
+  before_action :authenticate_user!
+  require 'net/http'
+
   def home
     @keywords = Keyword.all
   end
@@ -11,6 +14,27 @@ class PagesController < ApplicationController
         # Algo nuage de mots clés
       else
         # Request API
+        url = URI.parse("http://bayard.simplon.co/articles.json?by_keyword=#{params[:search]}")
+        @request = Net::HTTP.get(url)
+        @request = JSON.parse(@request)
+        @request.each do |r|
+          r['keywords'].each do |word|
+            if params[:search] == word
+              keyword = Keyword.new
+              keyword.keyword = word
+              if keyword.save
+                flash[:success] = "Un Keyword a bien été récupéré dans l'API !"
+              else
+                flash[:error] = "Oops ! Something went wrong ! :p"
+              end
+            else
+              puts word
+            end
+          end
+        end
+        puts "==============================="
+        puts @request
+        puts "==============================="
       end
     else
 
