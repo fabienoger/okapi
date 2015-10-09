@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151008160626) do
+ActiveRecord::Schema.define(version: 20151008183303) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -22,6 +22,17 @@ ActiveRecord::Schema.define(version: 20151008160626) do
     t.datetime "created_at",        null: false
     t.datetime "updated_at",        null: false
   end
+
+  create_table "keyword_marks", force: :cascade do |t|
+    t.integer  "note"
+    t.integer  "user_id"
+    t.integer  "keyword_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "keyword_marks", ["keyword_id"], name: "index_keyword_marks_on_keyword_id", using: :btree
+  add_index "keyword_marks", ["user_id"], name: "index_keyword_marks_on_user_id", using: :btree
 
   create_table "keywords", force: :cascade do |t|
     t.string   "keyword"
@@ -48,4 +59,6 @@ ActiveRecord::Schema.define(version: 20151008160626) do
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
 
+  add_foreign_key "keyword_marks", "keywords"
+  add_foreign_key "keyword_marks", "users"
 end
