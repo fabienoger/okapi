@@ -4,6 +4,7 @@ Rails.application.routes.draw do
 
   get 'pages/home'
 
+  get '/search' => 'pages#search'
   post '/search' => 'pages#search'
 
   root to: "pages#home"

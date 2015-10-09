@@ -15,10 +15,9 @@
           <a class="brand-logo right" href="/">Okapi</a>
           <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
           <ul id="nav-mobile" class="left hide-on-med-and-down">
+            <li><a href="/">Home</a></li>
             <% if user_signed_in? %>
-              <li><a href="/">Home</a></li>
-              <li><a href="/">Home</a></li>
-              <li><%= link_to current_user.name, edit_user_registration_path %></li>
+              <li><%= link_to "Edit", edit_user_registration_path %></li>
               <li><a rel="nofollow" data-method="delete" href="/users/sign_out">Log out</a></li>
             <% else %>
               <li><a href="/users/sign_up">Sign up</a></li>
@@ -27,7 +26,13 @@
           </ul>
           <ul class="side-nav" id="mobile-demo">
             <li><a href="/">Home</a></li>
-            <li><a href="/">Home</a></li>
+            <% if user_signed_in? %>
+              <li><%= link_to "Edit", edit_user_registration_path %></li>
+              <li><a rel="nofollow" data-method="delete" href="/users/sign_out">Log out</a></li>
+            <% else %>
+              <li><a href="/users/sign_up">Sign up</a></li>
+              <li><a href="/users/sign_in">Login</a></li>
+            <% end %>
           </ul>
         </div>
       </nav>
