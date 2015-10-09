@@ -19,7 +19,7 @@ class PagesController < ApplicationController
 
   def marking
 
-    if KeywordMark.where(:user_id => current_user)
+    if KeywordMark.where(:user_id => current_user) && KeywordMark.where(:user_id => current_user).length > 0
       keyword_to_update = KeywordMark.where(:user_id => current_user).first
 
       if keyword_to_update.update note: params[:note]
@@ -28,7 +28,7 @@ class PagesController < ApplicationController
 
       end
     else
-      @marking = KeywordMark.new note: params[:note], keyword_id: params[:keyword_id], user_id: current_user.id
+      @marking = KeywordMark.new note: params[:note], keyword_id: params[:keyword_id], user_id: current_user
       if @marking.save
         redirect_to '/'
       else
