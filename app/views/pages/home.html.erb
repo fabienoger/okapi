@@ -7,11 +7,12 @@
   <% @keywords.each do |keyword| %>
     <li>
       <p><%= keyword.keyword %></p>
-    <%= form_tag "/keyword/#{keyword.id}/mark", method: "post"%>
-        <% 5.times do |iteration| %>
-          <input type="hidden" name="keyword_id" value="<%= keyword.id %>">
-          <input type="submit" name="note" value="<%= iteration+1 %>" class="blue"/>
-        <% end %>
+      <%= form_tag "/keyword/#{keyword.id}/mark", method: "post" do%>
+          <% 5.times do |iteration| %>
+            <input type="hidden" name="keyword_id" value="<%= keyword.id %>">
+            <input type="submit" name="note" value="<%= iteration+1 %>" class="blue"/>
+          <% end %>
+      <% end %>
     </li>
   <% end %>
 </ul>
