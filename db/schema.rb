@@ -11,17 +11,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151008183303) do
+ActiveRecord::Schema.define(version: 20151009104548) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-
-  create_table "bidings", force: :cascade do |t|
-    t.integer  "keyword_id"
-    t.integer  "binded_keyword_id"
-    t.datetime "created_at",        null: false
-    t.datetime "updated_at",        null: false
-  end
 
   create_table "keyword_marks", force: :cascade do |t|
     t.integer  "note"
@@ -39,6 +32,25 @@ ActiveRecord::Schema.define(version: 20151008183303) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
+
+  create_table "linked_marks", force: :cascade do |t|
+    t.integer  "user_id"
+    t.integer  "linked_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "linked_marks", ["linked_id"], name: "index_linked_marks_on_linked_id", using: :btree
+  add_index "linked_marks", ["user_id"], name: "index_linked_marks_on_user_id", using: :btree
+
+  create_table "linkeds", force: :cascade do |t|
+    t.integer  "keyword_id"
+    t.integer  "linked_keyword_id"
+    t.datetime "created_at",        null: false
+    t.datetime "updated_at",        null: false
+  end
+
+  add_index "linkeds", ["keyword_id"], name: "index_linkeds_on_keyword_id", using: :btree
 
   create_table "users", force: :cascade do |t|
     t.string   "email",                  default: "", null: false
@@ -61,4 +73,7 @@ ActiveRecord::Schema.define(version: 20151008183303) do
 
   add_foreign_key "keyword_marks", "keywords"
   add_foreign_key "keyword_marks", "users"
+  add_foreign_key "linked_marks", "linkeds"
+  add_foreign_key "linked_marks", "users"
+  add_foreign_key "linkeds", "keywords"
 end

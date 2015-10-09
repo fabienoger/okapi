@@ -1,0 +1,9 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  keyword_id: 
+  linked_keyword_id: 1
+
+two:
+  keyword_id: 
+  linked_keyword_id: 1
