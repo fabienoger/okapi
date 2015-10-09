@@ -40,6 +40,7 @@ class PagesController < ApplicationController
           end
         else
           puts 'go Google!'
+          @googleSearch = "https://www.google.fr/search?q=#{params[:search]}"
         end
       end
     else

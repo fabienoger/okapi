@@ -9,7 +9,7 @@
   </div>
 <% end %>
 
-<%= form_tag '/search', method: 'post', class: "col s12 m1l1" do %>
+<%= form_tag '/search', method: 'post', class: "col s12 m12 l12" do %>
   <input type="text" name="search" placeholder="Mot clé" value="<% if @search %><%= @search %><% end %>" />
   <input type="submit" value="Rechercher" class="btn red accent-4" />
 <% end %>
@@ -28,6 +28,9 @@
     <% @result.each do |resultat| %>
       <p><%= resultat.keyword %></p>
     <% end %>
+  <% end %>
+  <%if @googleSearch %>
+    <a class="btn" href="<%= @googleSearch %>"><i class="left material-icons">language</i>Faire une recherche sur Google !</a>
   <% end %>
 </div>
 <div class="col s12 m12 l12">
