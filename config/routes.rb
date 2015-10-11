@@ -7,6 +7,8 @@ Rails.application.routes.draw do
   get '/search' => 'pages#search'
   post '/search' => 'pages#search'
 
+  get '/showkeyword/:id' => 'pages#showkeyword'
+
   post '/keyword/:id/mark' => 'pages#marking'
 
   root to: "pages#home"

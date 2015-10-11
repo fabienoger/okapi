@@ -1,0 +1,6 @@
+<%= form_tag '/search', method: 'post', class: "col s10 offset-s1 m10 offset-m1 l10 offset-l1" do %>
+  <input type="text" name="search" placeholder="Mot clé" />
+  <input type="submit" value="Rechercher" class="btn red accent-4" />
+<% end %>
+
+<h1> <%= @keyword[:keyword] %></h1>
