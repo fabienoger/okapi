@@ -26,7 +26,7 @@
       </div>
     <% end %>
     <% @result.each do |resultat| %>
-      <p><%= resultat.keyword %></p>
+      <p><a href="/showkeyword/<%= resultat.id%>"><%= resultat.keyword %></a></p>
     <% end %>
   <% end %>
   <%if @googleSearch %>
