@@ -45,17 +45,23 @@ class PagesController < ApplicationController
     end
     ############## Rechercher un Linked_keyword dans la DB #########################
     def search_in_linked_db(master, slave)
-      if master.class != String || slave.class != String
-          puts "Master ou slave n'est pas une String"
+      if master.class != String
+        puts "Master n'est pas une String"
+        master = master.keyword
+      elsif slave.class != String
+        puts "Slave n'est pas une String : #{slave.class}"
+        slave = slave.keyword
+      end
+      master = Keyword.where(:keyword => master).first
+      slave = Keyword.where(:keyword => slave).first
+      result = Linked.where("keyword_id = ? AND linked_keyword_id = ?", master, slave)
+      puts "###########---------------------------------#################################"
+      puts result.first
+      puts "###########---------------------------------#################################"
+      if result.length > 0
+        return result
       else
-        master = Keyword.where(:keyword => master).first
-        slave = Keyword.where(:keyword => slave).first
-        result = Linked.where("keyword_id = ? AND linked_keyword_id = ?", master, slave)
-        if result.length > 0
-          return result
-        else
-          return false
-        end
+        return false
       end
     end
 
@@ -80,36 +86,31 @@ class PagesController < ApplicationController
       if keyword.class == Keyword
         keyword = keyword.keyword
       end
-      puts "Seeking if #{keyword} is linked to #{linked_keyword.keyword} in database"
-      if search_in_keyword_db(keyword) && search_in_keyword_db(linked_keyword)
-        db_keyword = search_in_keyword_db(keyword)
-        puts db_keyword[:id]
-        if  search_in_linked_db(keyword, linked_keyword.keyword) != nil && search_in_linked_db(keyword, linked_keyword.keyword) != false
-          db_linkedstep_keywords = search_in_linked_db(keyword, linked_keyword.keyword)
-
-          db_linkedstep_keywords.each do |db_linkedstep_keyword|
-            puts "°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°"
-            puts "#{db_linkedstep_keyword.keyword.keyword}"
-            puts "°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°"
-            if Keyword.where(:id => db_linkedstep_keyword.keyword.id)
-              db_linked_keywords = Keyword.where(:id => db_linkedstep_keyword.keyword.id)
-              db_linked_keywords.each do |db_linked_keyword|
-                if db_linked_keyword.keyword == db_keyword.keyword
-                  puts "#{keyword} and #{db_linked_keyword.keyword} are already linked in database"
-                  return true
-                else
-                  puts "**#{keyword} and #{db_linked_keyword.keyword} are NOT linked in database**"
-                  return false
-                end
-              end
-            else
-              puts "No match"
-              return false
-            end
-          end
+#      Linked.where("keyword_id = ? AND linked_keyword_id = ?", )
+      if search_in_keyword_db(linked_keyword.keyword) != false
+        if search_in_linked_db(keyword, linked_keyword) != false
+          puts "GLOUGLOUGLOU !"
+          return true
+        else
+          puts "======================================================================="
+          puts "======================================================================="
+          puts "======================================================================="
+          return 1
         end
       else
-        puts "!!!!!  Error: #{keyword} is not in database !!!!!!"
+        puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+        puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+        puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+        puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+        puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+        puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+        puts search_in_keyword_db(linked_keyword.keyword)
+        puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+        puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+        puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+        puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+        puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+        puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
         return false
       end
     end
@@ -173,12 +174,15 @@ class PagesController < ApplicationController
             puts 'starting to create links'
             link_keywords(search_in_keyword_db(search.first[:keyword]), search_in_keyword_db(word))
             puts "#{word} et #{search.first[:keyword]} ont été liés dans la database"
+          elsif db_word && are_linked_in_db(search_in_keyword_db(params[:search]), search_in_keyword_db(word)) == 1
+            puts "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&"
+            
           elsif db_word && are_linked_in_db(search_in_keyword_db(params[:search]), search_in_keyword_db(word))
             #si le mot existe dans la databse et le lien entre la recherche et un mot lié existe dejà dans la database, on passe
             this_search = search_in_keyword_db(params[:search])
             puts "#{this_search.keyword} existe et est lié à #{db_word.keyword} dans la database"
-            flash[:error] = "#{this_search.keyword} existe et est lié a #{db_word.keyword} ds la db"
-          elsif db_word && !are_linked_in_db(search_in_keyword_db(params[:search]), search_in_keyword_db(word))
+            flash[:success] = "#{this_search.keyword} existe et est lié a #{db_word.keyword} ds la db"
+          elsif db_word != false && !are_linked_in_db(search_in_keyword_db(params[:search]), search_in_keyword_db(word))
             #si le mot_lié existe dans la database mais pas le liens avec son mot clé, on créé le lien
             link_keywords(search_in_keyword_db(params[:search]), db_word)
           else
@@ -238,6 +242,7 @@ class PagesController < ApplicationController
     end
 
     algoSearch(params[:search])
+    @search = params[:search]
     if params[:search].length > 0
       @result = Keyword.where(:keyword => params[:search])
     else
@@ -247,11 +252,11 @@ class PagesController < ApplicationController
 
   def showkeyword
     @keyword = Keyword.where(:id => params[:id]).first
-    @linkeds = Linked.where(:keyword_id => params[:id])
-    @linkedKeywords = []
-    @linkeds.each do |linked|
-      @linkedKeywords.push(Keyword.where(:id => linked.linked_keyword_id))
-    end
+    linked = Linked.where(:keyword_id => params[:id])
+    puts "|_________________________________________________|"
+    puts linked.class
+    puts "|_________________________________________________|"
+    @linkedKeywords = Keyword.where(:id => linked.linked_keyword_id)
   end
 
   def marking

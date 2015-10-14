@@ -4,13 +4,13 @@
   </div>
 <% end %>
 <% if flash[:error] %>
-  <div class="card-panel green accent-1">
-    <span class="green-text accent-4"><%= flash[:error] %></span>
+  <div class="card-panel red accent-1">
+    <span class="red-text accent-4"><%= flash[:error] %></span>
   </div>
 <% end %>
 
 <%= form_tag '/search', method: 'post', class: "col s12 m12 l12" do %>
-  <input type="text" name="search" placeholder="Mot clé" value="<% if @search %><%= @search %><% end %>" />
+  <input type="text" name="search" autofocus placeholder="Mot clé" value="<% if @search %><%= @search %><% end %>" />
   <input type="submit" value="Rechercher" class="btn red accent-4" />
 <% end %>
 <div class="col s12 m12 l12">
