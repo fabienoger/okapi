@@ -2,6 +2,7 @@ Rails.application.routes.draw do
 
   devise_for :users
 
+  get '/loosingtime' => 'pages#loosingtime'
   get 'pages/home'
 
   get '/search' => 'pages#search'

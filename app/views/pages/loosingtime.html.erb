@@ -1,0 +1,15 @@
+<div class="col s10 offset-s1 m10 offset-m1 l10 offset-l1">
+  <h2>Titre : <%= @article["title"] %></h2>
+  <hr />
+  <h4>Chapo : <%= @article["chapo"] %></h4>
+  <hr />
+  <p>Content :</p>
+  <p><%= @article["content"] %></p>
+  <% if @article["keywords"] %>
+  <p>
+    <% @article["keywords"].each do |keyword| %>
+      <%= keyword %>
+    <% end %>
+  </p>
+  <% end %>
+</div>

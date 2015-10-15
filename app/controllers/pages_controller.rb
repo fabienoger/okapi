@@ -288,4 +288,25 @@ class PagesController < ApplicationController
       end
     end
   end
+
+  def loosingtime
+    url = URI.parse("http://bayard.simplon.co/articles.json")
+    request = Net::HTTP.get(url)
+    if request.length > 2
+      requests = JSON.parse(request)
+      tab = []
+      requests.each do |r|
+        tab.push(r["id"])
+      end
+      random = tab.sample(1)[0]
+      requests.each do |r|
+        if r["id"] == random
+          @article = r
+        end
+      end
+    else
+      flash[:error] = "No article found"
+      return false
+    end
+  end
 end
