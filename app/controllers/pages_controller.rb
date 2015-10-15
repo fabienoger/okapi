@@ -47,11 +47,12 @@ class PagesController < ApplicationController
     ############## Rechercher un Linked_keyword dans la DB #########################
     def search_in_linked_db(master, slave)
       if master.class != String
-        puts "Master n'est pas une String"
+        puts "Master n'est pas une String : #{master.class}"
         master = master.keyword
       elsif slave.class != String
         puts "Slave n'est pas une String : #{slave.class}"
         slave = slave.keyword
+        puts slave + " !!!!!!!!!!!!!!!!"
       end
       master = Keyword.where(:keyword => master).first
       slave = Keyword.where(:keyword => slave).first
