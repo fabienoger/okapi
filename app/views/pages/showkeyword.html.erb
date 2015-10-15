@@ -5,9 +5,9 @@
 
 <article class="col s10 offset-s1 m10 offset-m1 l10 offset-l1">
   <h1> <%= @keyword[:keyword] %></h1>
-  <p> Nombre de mots liés: <%= @linkeds.length %> </p>
+  <p> Nombre de mots liés: <%= @linkedKeywords.length %> </p>
   <% @linkedKeywords.each do |linkedKeyword| %>
-    <p><a href="/showkeyword/<%= linkedKeyword.first[:id]%>"> <%= linkedKeyword.first[:keyword] %> </a></p>
+    <p><a href="/showkeyword/<%= linkedKeyword.id %>"> <%= linkedKeyword.keyword %> </a></p>
   <% end %>
 
 </article>

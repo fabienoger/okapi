@@ -8,6 +8,7 @@ class PagesController < ApplicationController
 
   def search
     ############## Rechercher un Keyword dans la DB #########################
+    params[:search] = params[:search].downcase
     def search_in_keyword_db(search)
       if search.class == ActiveRecord::Relation
         puts search.dup
@@ -88,12 +89,17 @@ class PagesController < ApplicationController
       end
 #      Linked.where("keyword_id = ? AND linked_keyword_id = ?", )
       if search_in_keyword_db(linked_keyword.keyword) != false
+        puts "======================================================================="
+        puts "========= #{linked_keyword.keyword} exite dans la table Keywords =========="
+        puts "======================================================================="
         if search_in_linked_db(keyword, linked_keyword) != false
-          puts "GLOUGLOUGLOU !"
+          puts "======================================================================="
+          puts "==== #{keyword} est lié à #{linked_keyword.keyword} dans la table Linked ===="
+          puts "======================================================================="
           return true
         else
           puts "======================================================================="
-          puts "======================================================================="
+            puts "==#{keyword} n'est PAs lié à #{linked_keyword.keyword} dans la table Linked ==="
           puts "======================================================================="
           return 1
         end
@@ -104,7 +110,7 @@ class PagesController < ApplicationController
         puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
         puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
         puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-        puts search_in_keyword_db(linked_keyword.keyword)
+        puts "=== #{linked_keyword.keyword} N'existe pas dans la table Keyword il faut le créer !==="
         puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
         puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
         puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
@@ -176,7 +182,7 @@ class PagesController < ApplicationController
             puts "#{word} et #{search.first[:keyword]} ont été liés dans la database"
           elsif db_word && are_linked_in_db(search_in_keyword_db(params[:search]), search_in_keyword_db(word)) == 1
             puts "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&"
-            
+            link_keywords(search_in_keyword_db(params[:search]),search_in_keyword_db(word))
           elsif db_word && are_linked_in_db(search_in_keyword_db(params[:search]), search_in_keyword_db(word))
             #si le mot existe dans la databse et le lien entre la recherche et un mot lié existe dejà dans la database, on passe
             this_search = search_in_keyword_db(params[:search])
@@ -252,11 +258,14 @@ class PagesController < ApplicationController
 
   def showkeyword
     @keyword = Keyword.where(:id => params[:id]).first
-    linked = Linked.where(:keyword_id => params[:id])
+    linkeds = Linked.where(:keyword_id => params[:id])
     puts "|_________________________________________________|"
-    puts linked.class
+    puts linkeds.class
     puts "|_________________________________________________|"
-    @linkedKeywords = Keyword.where(:id => linked.linked_keyword_id)
+    @linkedKeywords = []
+    linkeds.each do |linked|
+    @linkedKeywords.push(Keyword.where(:id => linked.linked_keyword_id).first)
+    end
   end
 
   def marking
