@@ -25,9 +25,23 @@
         <span class="red-text accent-4">No (<%= @result.length%>)</span>
       </div>
     <% end %>
-    <% @result.each do |resultat| %>
-      <p><a href="/showkeyword/<%= resultat.id%>"><%= resultat.keyword %></a></p>
-    <% end %>
+    <ul>
+      <% @result.each do |resultat| %>
+        <li class="card-panel col s4  m4  l4 ">
+          <h5><a href="/showkeyword/<%= resultat.id%>"><%= resultat.keyword %></a></h5>
+          <%= form_tag "/keyword/#{resultat.id}/mark", method: "post" do%>
+              <% 5.times do |iteration| %>
+                <input type="hidden" name="keyword_id" value="<%= resultat.id %>">
+                <% if resultat.keyword_mark.where(:user_id => current_user).length > 0 && resultat.keyword_mark.where(:user_id => current_user).first.note == iteration + 1 %>
+                  <input type="submit" class="btn-floating blue accent-4" class="keyword-mark" name="note" value="<%= iteration+1 %>" />
+                <% else %>
+                <input type="submit" class="btn-floating red accent-4" class="keyword-mark" name="note" value="<%= iteration+1 %>" />
+                <% end %>
+              <% end %>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
   <% end %>
   <%if @googleSearch %>
     <a class="btn" href="<%= @googleSearch %>"><i class="left material-icons">language</i>Faire une recherche sur Google !</a>
