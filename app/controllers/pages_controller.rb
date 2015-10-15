@@ -7,6 +7,9 @@ class PagesController < ApplicationController
   end
 
   def search
+    puts "=====================".yellow
+    puts "Début de la route".yellow
+    puts "=====================".yellow
     ############## Rechercher un Keyword dans la DB #########################
     params[:search] = params[:search].downcase
     session[:last_search] = params[:search]
@@ -23,47 +26,41 @@ class PagesController < ApplicationController
       elsif (search.is_a? String)
         search = search
       elsif (search == nil)
-        puts '!!!ERROR!!!'
+        puts '!!!ERROR!!!'.red
       end
-      puts "Début de la search_in_db"
-      puts "Looking for: #{search} in keyword database"
+      puts "Looking for: #{search} in keyword database".yellow
       result = Keyword.where(:keyword => search)
       resultformated = result.first
       if resultformated.class == Keyword
-        puts "*****************************"
-        puts "***     #{resultformated[:keyword]}"
-        puts "*****************************"
-        puts "Found #{result.first[:keyword]} in database"
+        puts "Found #{resultformated[:keyword]} in database".green
         if result.length > 0
-          puts "Found #{result.length} occurence of #{result.first[:keyword]} in database"
+          puts "Found #{result.length} occurence of #{result.first[:keyword]} in database".cyan
           return resultformated
         else
-          puts "Did not found #{search} in database"
+          puts "Did not found #{search} in database".red
           return false
         end
       else
-        puts '#{result} is not a KEYWORD'
+        puts '#{result} is not a Keyword object'.magenta
       end
     end
     ############## Rechercher un Linked_keyword dans la DB #########################
     def search_in_linked_db(master, slave)
       if master.class != String
-        puts "Master n'est pas une String : #{master.class}"
+        puts "Master isn't a String : #{master.class}".magenta
         master = master.keyword
       elsif slave.class != String
-        puts "Slave n'est pas une String : #{slave.class}"
+        puts "Slave isn't a String : #{slave.class}".magenta
         slave = slave.keyword
-        puts slave + " !!!!!!!!!!!!!!!!"
       end
       master = Keyword.where(:keyword => master).first
       slave = Keyword.where(:keyword => slave).first
       result = Linked.where("keyword_id = ? AND linked_keyword_id = ?", master, slave)
-      puts "###########---------------------------------#################################"
-      puts result.first
-      puts "###########---------------------------------#################################"
       if result.length > 0
+        puts "MATCH!".green
         return result
       else
+        puts "NO MATCH!".red
         return false
       end
     end
@@ -91,34 +88,25 @@ class PagesController < ApplicationController
       end
 #      Linked.where("keyword_id = ? AND linked_keyword_id = ?", )
       if search_in_keyword_db(linked_keyword.keyword) != false
-        puts "======================================================================="
-        puts "========= #{linked_keyword.keyword} exite dans la table Keywords =========="
-        puts "======================================================================="
+        puts "=======================================================================".blue
+        puts "========= #{linked_keyword.keyword} exite dans la table Keywords ==========".blue
+        puts "=======================================================================".blue
         if search_in_linked_db(keyword, linked_keyword) != false
-          puts "======================================================================="
-          puts "==== #{keyword} est lié à #{linked_keyword.keyword} dans la table Linked ===="
-          puts "======================================================================="
+          puts "=======================================================================".green
+          puts "==== #{keyword} est lié à #{linked_keyword.keyword} dans la table Linked ====".green
+          puts "=======================================================================".green
           return true
         else
-          puts "======================================================================="
-            puts "==#{keyword} n'est PAs lié à #{linked_keyword.keyword} dans la table Linked ==="
-          puts "======================================================================="
+          puts "=======================================================================".yellow
+            puts "==#{keyword} n'est PAs lié à #{linked_keyword.keyword} dans la table Linked ===".yellow
+          puts "=======================================================================".yellow
           return 1
         end
       else
-        puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-        puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-        puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-        puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-        puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-        puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-        puts "=== #{linked_keyword.keyword} N'existe pas dans la table Keyword il faut le créer !==="
-        puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-        puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-        puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-        puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-        puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-        puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+
+        puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~".red
+        puts "=== #{linked_keyword.keyword} N'existe pas dans la table Keyword il faut le créer !===".red
+        puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~".red
         return false
       end
     end
@@ -126,20 +114,20 @@ class PagesController < ApplicationController
     ################# Lier deux mots ####################
 
     def link_keywords(keyword, linked_keyword)
-      puts "=°=°=°=°=°=°=°=°=°=°=°=°=°=°=°=°=°=°=°=°=°"
-      puts "=°=° Linking of #{keyword[:keyword]} and #{linked_keyword.keyword}°=°=°"
-      puts "=°=°=°=°=°=°=°=°=°=°=°=°=°=°=°=°=°=°=°=°=°"
+      puts "=°=°=°=°=°=°=°=°=°=°=°=°=°=°=°=°=°=°=°=°=°".light_cyan
+      puts "=°=° Linking of #{keyword[:keyword]} and #{linked_keyword.keyword}°=°=°".light_cyan
+      puts "=°=°=°=°=°=°=°=°=°=°=°=°=°=°=°=°=°=°=°=°=°".light_cyan
 
       if keyword && linked_keyword
-        if keyword[:keyword] != linked_keyword.keyword
+        if keyword[:keyword] != linked_keyword.keyword && (are_linked_in_db(keyword[:keyword],linked_keyword ) == 1 || are_linked_in_db(keyword[:keyword],linked_keyword ) == false )
           link = Linked.new
           link.keyword_id = keyword[:id]
           link.linked_keyword_id = linked_keyword.id
           if link.save
-            puts "#{keyword[:keyword]} existe et a été lié à dans la database ***inside link_keywords***"
+            puts "#{keyword[:keyword]} existe et a été lié à dans la database ***inside link_keywords***".green
             flash[:succes] = "link created between #{keyword} and #{linked_keyword}"
           else
-            puts "#{keyword[:keyword]} existe et n'a pas été lié à dans la database ***inside link_keywords***"
+            puts "#{keyword[:keyword]} existe et n'a pas été lié à dans la database ***inside link_keywords***".red
             flash[:error] = "Oups, something went wrong during the attempt to link #{keyword} and #{linked_keyword} !"
           end
         end
@@ -152,9 +140,10 @@ class PagesController < ApplicationController
       keyword_to_create.keyword = keyword
       if keyword_to_create.save
         flash[:success] = "#{keyword} as been added to Keywords's table"
-        puts "#{keyword} n'existe pas et a été créé dans la database"
+        puts "#{keyword} n'existe pas et a été créé dans la database".green
         return true
       else
+        puts "#{keyword} n'existe pas et a n'a pas été créé dans la database".red
         flash[:success] = "#{keyword} couldn't be added to Keywords's tables"
       end
     end
@@ -163,38 +152,39 @@ class PagesController < ApplicationController
     ############## Mettre à jour les liens ##############
 
     def update_linked_keywords(responses)
-      puts "======================================"
-      puts "Début de la mise à jour des mots liés"
-      puts "======================================"
-      puts "Réponse de l'API : #{responses}"
+      puts "======================================".blue
+      puts "Début de la mise à jour des mots liés".blue
+      puts "======================================".blue
+      puts "Réponse de l'API : #{responses}".cyan
 
       responses.each do |response|
-        puts "article #{response[:id]} avec mots liés"
-        puts " ==> #{response["keywords"]} <=="
+        puts "article #{response['id']} avec mots liés".blue
+        puts " ==> #{response["keywords"]} <==".magenta
         response["keywords"].each do |word|
           #pour chaque keyword de chaque article récupéré
-          puts "début de la mise a jour du mot lié #{word}"
+          puts "début de la mise a jour du mot lié #{word}".yellow
           db_word = search_in_keyword_db(word)
           if word == params[:search]
-            puts "#{word} est le mot d'origin, il faut passer à l'étape suivante !"
+            puts "#{word} is the original word, skipping".magenta
           elsif db_word == nil
+            puts 'starting to create #{word}'.yellow
             new_keyword = create_keyword(word)
-            puts 'starting to create links'
+            puts 'starting to create links'.yellow
             link_keywords(search_in_keyword_db(search.first[:keyword]), search_in_keyword_db(word))
-            puts "#{word} et #{search.first[:keyword]} ont été liés dans la database"
           elsif db_word && are_linked_in_db(search_in_keyword_db(params[:search]), search_in_keyword_db(word)) == 1
-            puts "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&"
+            puts 'starting to create links'.light_green
             link_keywords(search_in_keyword_db(params[:search]),search_in_keyword_db(word))
           elsif db_word && are_linked_in_db(search_in_keyword_db(params[:search]), search_in_keyword_db(word))
             #si le mot existe dans la databse et le lien entre la recherche et un mot lié existe dejà dans la database, on passe
             this_search = search_in_keyword_db(params[:search])
-            puts "#{this_search.keyword} existe et est lié à #{db_word.keyword} dans la database"
+            puts "#{this_search.keyword} exist and is linked to #{db_word.keyword}".cyan
             flash[:success] = "#{this_search.keyword} existe et est lié a #{db_word.keyword} ds la db"
           elsif db_word != false && !are_linked_in_db(search_in_keyword_db(params[:search]), search_in_keyword_db(word))
             #si le mot_lié existe dans la database mais pas le liens avec son mot clé, on créé le lien
+            puts 'starting to create links'.yellow
             link_keywords(search_in_keyword_db(params[:search]), db_word)
           else
-            puts "#{word} n'existe pas et n'a pas été lié dans la database"
+            puts "#{word} n'existe pas et n'a pas été lié dans la database".red
             flash[:error] = "Oups, something went wrong !"
           end
           puts "======================================"
@@ -207,49 +197,53 @@ class PagesController < ApplicationController
     #####################################################
     ################# Algorythme général ################
 
-    def algoSearch(search)
-      puts "====================="
-      puts "Début de la recherche"
-      puts "====================="
-      if search.length > 0
+    def algoSearch(research)
+
+      puts "=====================".yellow
+      puts "Début de la recherche".yellow
+      puts "=====================".yellow
+      if research.length > 0
         # Si la recherche n'est pas vide
-        puts "**********************************************"
-        puts "***recherche de: #{search} dans la database***"
-        puts "**********************************************"
-        if search_in_keyword_db(search)
+        puts "**********************************************".light_green
+        puts "***recherche de: #{research} dans la database***".light_green
+        puts "**********************************************".light_green
+        if search_in_keyword_db(research)
           #si la recherche se trouve dans la DB
-          puts "#{search} à été trouvé dans la database"
-          responses = search_in_API(search)
+          puts "#{research} à été trouvé dans la database".green
+          responses = search_in_API(research)
           if responses.length > 0
             # Si le mot existe (toujours) dans l'API
-            puts "#{search} existe dans la DB, début de mise à jour via l'API"
+            puts "#{research} existe dans la DB, début de mise à jour via l'API".cyan
             update_linked_keywords(responses)
           else
-            puts "#{search} existe dans la DB, mais plus dans l'API"
-            flash[:info] = "#{search} as no update or couldn't be update"
+            puts "#{research} existe dans la DB, mais plus dans l'API".magenta
+            flash[:info] = "#{research} as no update or couldn't be update"
           end
         else
           #si la recherche ne se trouve pas dans la DB
-          puts "----------------------------------------"
-          puts "#{search} Ne ce trouve pas dans la DB !"
-          puts "Recherche de #{search} Dans l'API !"
+          puts "----------------------------------------".yellow
+          puts "#{research} Ne ce trouve pas dans la DB !".red
+          puts "Recherche de #{research} Dans l'API !".cyan
 
-          responses = search_in_API(search)
+          responses = search_in_API(research)
           if responses
-            # algo de récupération
-            create_keyword(search)
+            create_keyword(research)
             update_linked_keywords(responses)
           else
-            puts 'go Google!'
-            @googleSearch = "https://www.google.fr/search?q=#{params[:search]}"
+            puts 'go Google!'.red
+            @googleSearch = "https://www.google.fr/search?q=#{research}"
           end
         end
       else
         flash[:error] = "Vous devez entrer un mot clef pour lancer une recherche"
       end
+      puts String.colors
+      puts "Fin de la fonction de l'algo".light_magenta
     end
-
+    puts "Lancement de l'algo".magenta
     algoSearch(params[:search])
+    puts "fin de l'appel de l'algo".yellow
+
     @search = params[:search]
     if params[:search].length > 0
       @result = Keyword.where(:keyword => params[:search])
