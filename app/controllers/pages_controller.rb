@@ -9,6 +9,7 @@ class PagesController < ApplicationController
   def search
     ############## Rechercher un Keyword dans la DB #########################
     params[:search] = params[:search].downcase
+    session[:last_search] = params[:search]
     def search_in_keyword_db(search)
       if search.class == ActiveRecord::Relation
         puts search.dup
@@ -270,19 +271,18 @@ class PagesController < ApplicationController
   end
 
   def marking
-
     if KeywordMark.where(["user_id = ? and keyword_id = ?", current_user, params[:keyword_id]]).length > 0
       keyword_to_update = KeywordMark.where(["user_id = ? and keyword_id = ?", current_user, params[:keyword_id]]).first
 
       if keyword_to_update.update note: params[:note]
-        redirect_to '/'
+        redirect_to request.referer || '/'
       else
 
       end
     else
       @marking = KeywordMark.new note: params[:note], keyword_id: params[:keyword_id], user_id: current_user.id
       if @marking.save
-        redirect_to '/'
+        redirect_to request.referer || '/'
       else
 
       end

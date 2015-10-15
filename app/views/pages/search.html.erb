@@ -1,3 +1,6 @@
+<% if session[:last_search] %>
+  <%= session[:last_search] %>
+<% end %>
 <% if flash[:success] %>
   <div class="card-panel green accent-1">
     <span class="green-text accent-4"><%= flash[:success] %></span>

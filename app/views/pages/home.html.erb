@@ -2,21 +2,3 @@
   <input type="text" name="search" placeholder="Mot clé" autofocus />
   <input type="submit" value="Rechercher" class="btn red accent-4" />
 <% end %>
-
-<ul class="col s10 offset-s1 m10 offset-m1 l10 offset-l1">
-  <% @keywords.each do |keyword| %>
-    <li class="card-panel col s4  m4  l4 ">
-      <h5><a href="/showkeyword/<%= keyword.id %>"><%= keyword.keyword %></a></h5>
-      <%= form_tag "/keyword/#{keyword.id}/mark", method: "post" do%>
-          <% 5.times do |iteration| %>
-            <input type="hidden" name="keyword_id" value="<%= keyword.id %>">
-            <% if keyword.keyword_mark.where(:user_id => current_user).length > 0 && keyword.keyword_mark.where(:user_id => current_user).first.note == iteration + 1 %>
-              <input type="submit" class="btn-floating blue accent-4" class="keyword-mark" name="note" value="<%= iteration+1 %>" />
-            <% else %>
-            <input type="submit" class="btn-floating red accent-4" class="keyword-mark" name="note" value="<%= iteration+1 %>" />
-            <% end %>
-          <% end %>
-      <% end %>
-    </li>
-  <% end %>
-</ul>
