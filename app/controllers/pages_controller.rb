@@ -111,7 +111,7 @@ class PagesController < ApplicationController
           request = request_api("articles", i)
           request.each do |r|
             @ask_categories.each do |categorie|
-              if categorie["id"].to_i == r["category_id"].to_i
+              if categorie["id"] == r["category_id"]
                 @articles.push(r)
                 #puts "L'article est dans la categorie => #{r["category_id"]}".green
               else

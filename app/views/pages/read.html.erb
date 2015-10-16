@@ -8,7 +8,7 @@
     <%= form_tag "/category/#{params[:id]}/read/#{params[:article_id]}", method: "post" do %>
       <% 5.times do |iteration| %>
         <input type="hidden" name="article_id" value="<%= @article["id"] %>">
-        <% if ArticleMark.where(:user_id => current_user).length > 0 && ArticleMark.where(["user_id = ? and article_id = ?", current_user, @article["id"]]).first != nil && ArticleMark.where(["user_id = ? and article_id = ?", current_user, @article["id"]]).first.note == iteration+1 %>
+        <% if ArticleMark.where(:user_id => current_user).length > 0 && ArticleMark.where(["user_id = ? and article_id = ?", current_user, @article["id"]]).first.note == iteration+1 %>
           <input type="submit" class="btn-floating blue accent-4" class="keyword-mark" name="note" value="<%= iteration+1 %>" />
         <% else %>
           <input type="submit" class="btn-floating red accent-4" class="keyword-mark" name="note" value="<%= iteration+1 %>" />
