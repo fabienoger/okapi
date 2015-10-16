@@ -1,3 +1,30 @@
 input.keyword-mark {
   margin: 0 10px;
 }
+
+div.big-title {
+  span.by {
+    display: inline-block;
+    margin-right: 250px;
+    -ms-transform: rotate(-20deg); /* IE 9 */
+    -webkit-transform: rotate(-20deg); /* Chrome, Safari, Opera */
+    transform: rotate(-20deg);
+    font-size: 1.5em;
+  }
+}
+
+@media screen and (max-width: 640px) {
+  div.big-title {
+    h2 {
+      font-size: 2.5em;
+    }
+    span.by {
+      display: inline-block;
+      margin-right: 50px;
+      -ms-transform: rotate(-20deg); /* IE 9 */
+      -webkit-transform: rotate(-20deg); /* Chrome, Safari, Opera */
+      transform: rotate(-20deg);
+      font-size: 1.5em;
+    }
+  }
+}
