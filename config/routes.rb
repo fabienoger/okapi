@@ -5,6 +5,8 @@ Rails.application.routes.draw do
   get '/loosingtime' => 'pages#loosingtime'
   get 'pages/home'
 
+  get '/category/:id' => 'pages#category'
+  get '/category/:id/read/:article_id' => 'pages#read'
   get '/search' => 'pages#search'
   post '/search' => 'pages#search'
 

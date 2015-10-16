@@ -16,7 +16,7 @@
           <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
           <ul id="dropdown-categorie" class="dropdown-content">
             <% @menu_categories.each do |categorie| %>
-              <li><a href="#!"><%= categorie["title"].split(" ")[2] %></a></li>
+              <li><a href="/category/<%= categorie["id"] %>"><%= categorie["title"].split(" ")[2] %></a></li>
               <li class="divider"></li>
             <% end %>
           </ul>

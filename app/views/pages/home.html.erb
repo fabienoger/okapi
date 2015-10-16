@@ -7,11 +7,6 @@
 <% end %>
 
 <div class="col s12 m12 l12">
-  <% @ask_categories.each do |categorie| %>
-    <div class="chip"><%= categorie["title"].split(" ")[2] %> : <%= categorie["id"] %></div>
-  <% end %>
-</div>
-<div class="col s12 m12 l12">
   <div class="row article">
     <% @articles.each do |article| %>
       <div class="col s12 m6">
@@ -26,7 +21,7 @@
             <% end %>
           </div>
           <div class="card-action">
-            <a href="#">Lire l'article</a>
+            <a href="/category/<%= article["category_id"] %>/read/<%= article["id"] %>">Lire l'article</a>
           </div>
         </div>
       </div>
