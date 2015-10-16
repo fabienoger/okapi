@@ -3,7 +3,63 @@ class PagesController < ApplicationController
   require 'net/http'
 
   def home
-    @keywords = Keyword.all
+    def request_api(type, page = nil)
+      if page == nil
+        url = URI.parse("http://bayard.simplon.co/#{type}.json")
+      else
+        url = URI.parse("http://bayard.simplon.co/#{type}.json?page=#{page}")
+      end
+      request = Net::HTTP.get(url)
+      if request.length > 2
+        responses = JSON.parse(request)
+        return responses
+      else
+        flash[:error] = "Request fail"
+        puts "-----------------------------------------".red
+        puts "Request Fail".red
+        puts "-----------------------------------------".red
+        return false
+      end
+    end
+    # Get all categories (Request API)
+    if request_api("categories") != false
+      @ask_categories = []
+      request = request_api("categories")
+      request.each do |r|
+        if r["title"].split(" ")[0] == "Ask"
+          @ask_categories.push(r)
+          puts "#{r["title"]} pushed in array".green
+        else
+          puts "Oups ! There no ask okapi category".red
+        end
+      end
+    else
+      puts "Pas de réponse de l'API pour les catégories".red
+    end
+    # Get all articles (Request API)
+    i = 0
+    @articles = []
+    while (i < 5)
+      if i != 0
+        if request_api("articles", i) != false
+          request = request_api("articles", i)
+          request.each do |r|
+            @ask_categories.each do |categorie|
+              puts "#{categorie["id"]}".yellow
+              if categorie["id"] == r["category_id"]
+                @articles.push(r)
+                #puts "L'article est dans la categorie => #{r["category_id"]}".green
+              else
+                #puts "L'article n'est pas dans la catégorie Ask Okapi ~something~ => #{r["category_id"]}".red
+              end
+            end
+          end
+        else
+          puts "Pas de réponse de l'API pour les articles".red
+        end
+      end
+      i += 1
+    end
   end
 
   def search

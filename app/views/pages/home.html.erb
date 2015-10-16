@@ -1,7 +1,35 @@
-<div class="col s10 offset-s1 m10 offset-m1 l10 offset-l1">
+<div class="col s12 m12 l12">
   <a class="center-align" href="/loosingtime"><h2>J'ai 5 minutes à perdre</h2></a>
 </div>
-<%= form_tag '/search', method: 'post', class: "col s10 offset-s1 m10 offset-m1 l10 offset-l1" do %>
+<%= form_tag '/search', method: 'post', class: "col s12 m12 l12" do %>
   <input type="text" name="search" placeholder="Mot clé" autofocus />
   <input type="submit" value="Rechercher" class="btn red accent-4" />
 <% end %>
+
+<div class="col s12 m12 l12">
+  <% @ask_categories.each do |categorie| %>
+    <div class="chip"><%= categorie["title"].split(" ")[2] %> : <%= categorie["id"] %></div>
+  <% end %>
+</div>
+<div class="col s12 m12 l12">
+  <div class="row article">
+    <% @articles.each do |article| %>
+      <div class="col s12 m6">
+        <div class="card blue-grey darken-1">
+          <div class="card-content white-text">
+            <span class="card-title"><%= article["title"] %></span>
+            <p class="content"><%= article["content"][0..140] %>...</p>
+            <% @ask_categories.each do |categorie| %>
+              <% if article["category_id"] == categorie["id"] %>
+                <div class="chip"><%= categorie["title"].split(" ")[2] %></div>
+              <% end %>
+            <% end %>
+          </div>
+          <div class="card-action">
+            <a href="#">Lire l'article</a>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
