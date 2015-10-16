@@ -14,11 +14,29 @@ class PagesController < ApplicationController
       responses = JSON.parse(request)
       return responses
     else
-      flash[:error] = "Request fail"
       puts "-----------------------------------------".red
       puts "Request Fail".red
       puts "-----------------------------------------".red
       return false
+    end
+  end
+
+  def articleMarking
+    if ArticleMark.where(["user_id = ? and article_id = ?", current_user, params[:article_id]]).length > 0
+      article_to_update = ArticleMark.where(["user_id = ? and article_id = ?", current_user, params[:article_id]]).first
+
+      if article_to_update.update note: params[:note]
+        redirect_to request.referer || '/'
+      else
+
+      end
+    else
+      @marking = ArticleMark.new note: params[:note], article_id: params[:article_id], user_id: current_user.id
+      if @marking.save
+        redirect_to request.referer || '/'
+      else
+
+      end
     end
   end
 
@@ -229,7 +247,6 @@ class PagesController < ApplicationController
           link.linked_keyword_id = linked_keyword.id
           if link.save
             puts "#{keyword[:keyword]} existe et a été lié à dans la database ***inside link_keywords***".green
-            flash[:succes] = "link created between #{keyword} and #{linked_keyword}"
           else
             puts "#{keyword[:keyword]} existe et n'a pas été lié à dans la database ***inside link_keywords***".red
             flash[:error] = "Oups, something went wrong during the attempt to link #{keyword} and #{linked_keyword} !"
@@ -243,12 +260,10 @@ class PagesController < ApplicationController
       keyword_to_create = Keyword.new
       keyword_to_create.keyword = keyword
       if keyword_to_create.save
-        flash[:success] = "#{keyword} as been added to Keywords's table"
         puts "#{keyword} n'existe pas et a été créé dans la database".green
         return true
       else
         puts "#{keyword} n'existe pas et a n'a pas été créé dans la database".red
-        flash[:success] = "#{keyword} couldn't be added to Keywords's tables"
       end
     end
 
@@ -359,9 +374,6 @@ class PagesController < ApplicationController
   def showkeyword
     @keyword = Keyword.where(:id => params[:id]).first
     linkeds = Linked.where(:keyword_id => params[:id])
-    puts "|_________________________________________________|"
-    puts linkeds.class
-    puts "|_________________________________________________|"
     @linkedKeywords = []
     linkeds.each do |linked|
     @linkedKeywords.push(Keyword.where(:id => linked.linked_keyword_id).first)

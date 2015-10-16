@@ -6,7 +6,9 @@ Rails.application.routes.draw do
   get 'pages/home'
 
   get '/category/:id' => 'pages#category'
+
   get '/category/:id/read/:article_id' => 'pages#read'
+  post '/category/:id/read/:article_id' => 'pages#articleMarking'
   get '/search' => 'pages#search'
   post '/search' => 'pages#search'
 
