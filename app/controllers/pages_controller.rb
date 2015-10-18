@@ -133,37 +133,41 @@ class PagesController < ApplicationController
     puts "Début de la route".yellow
     puts "=====================".yellow
     ############## Rechercher un Keyword dans la DB #########################
-    params[:search] = params[:search].downcase
-    session[:last_search] = params[:search]
-    def search_in_keyword_db(search)
-      if search.class == ActiveRecord::Relation
-        puts search.dup
-        search = search.dup
-      elsif (search.class == Keyword)
-        puts search.keyword
-        search = search.keyword
-      elsif (search.class == Linked)
-        puts search.keyword_id
-        search = Keyword.where(:id => search.keyword_id).dup.first
-      elsif (search.is_a? String)
-        search = search
-      elsif (search == nil)
-        puts '!!!ERROR!!!'.red
-      end
-      puts "Looking for: #{search} in keyword database".yellow
-      result = Keyword.where(:keyword => search)
-      resultformated = result.first
-      if resultformated.class == Keyword
-        puts "Found #{resultformated[:keyword]} in database".green
-        if result.length > 0
-          puts "Found #{result.length} occurence of #{result.first[:keyword]} in database".cyan
-          return resultformated
+    if params[:search]
+      params[:search] = params[:search].downcase
+      session[:last_search] = params[:search]
+      def search_in_keyword_db(search)
+        if search.class == ActiveRecord::Relation
+          puts search.dup
+          search = search.dup
+        elsif (search.class == Keyword)
+          puts search.keyword
+          search = search.keyword
+        elsif (search.class == Linked)
+          puts search.keyword_id
+          search = Keyword.where(:id => search.keyword_id).dup.first
+        elsif (search.is_a? String)
+          search = search
+        elsif (search == nil)
+          puts '!!!ERROR!!!'.red
+        end
+        puts "Looking for: #{search} in keyword database".yellow
+        result = Keyword.where(:keyword => search)
+        resultformated = result.first
+        if resultformated.class == Keyword
+          puts "Found #{resultformated[:keyword]} in database".green
+          if result.length > 0
+            puts "Found #{result.length} occurence of #{result.first[:keyword]} in database".cyan
+            return resultformated
+          else
+            puts "Did not found #{search} in database".red
+            return false
+          end
         else
-          puts "Did not found #{search} in database".red
-          return false
+          puts '#{result} is not a Keyword object'.magenta
         end
       else
-        puts '#{result} is not a Keyword object'.magenta
+        flash[:error] = "Vous devez saisir un mot clé."
       end
     end
     ############## Rechercher un Linked_keyword dans la DB #########################
@@ -359,15 +363,20 @@ class PagesController < ApplicationController
       puts String.colors
       puts "Fin de la fonction de l'algo".light_magenta
     end
-    puts "Lancement de l'algo".magenta
-    algoSearch(params[:search])
-    puts "fin de l'appel de l'algo".yellow
 
-    @search = params[:search]
-    if params[:search].length > 0
-      @result = Keyword.where(:keyword => params[:search])
+    if params[:search]
+      puts "Lancement de l'algo".magenta
+      algoSearch(params[:search])
+      puts "fin de l'appel de l'algo".yellow
+
+      @search = params[:search]
+      if params[:search].length > 0
+        @result = Keyword.where(:keyword => params[:search])
+      else
+        @result = false
+      end
     else
-      @result = false
+      flash[:error] = "Vous devez entrer un mot clef pour lancer une recherche"
     end
   end
 

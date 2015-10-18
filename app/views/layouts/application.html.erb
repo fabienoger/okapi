@@ -14,6 +14,17 @@
         <div class="container nav-wrapper">
           <a class="brand-logo right" href="/">Okapi</a>
           <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
+
+          <ul class="side-nav" id="mobile-demo">
+            <li><a href="/">Home</a></li>
+            <% if user_signed_in? %>
+              <li><a class="dropdown-button" href="#!" data-activates="dropdown-categorie">Categories<i class="material-icons right">arrow_drop_down</i></a></li>
+              <li><a rel="nofollow" data-method="delete" href="/users/sign_out">Log out</a></li>
+            <% else %>
+              <li><a href="/users/sign_up">Sign up</a></li>
+              <li><a href="/users/sign_in">Login</a></li>
+            <% end %>
+          </ul>
           <ul id="dropdown-categorie" class="dropdown-content">
             <% @menu_categories.each do |categorie| %>
               <li><a href="/category/<%= categorie["id"] %>"><%= categorie["title"].split(" ")[2] %></a></li>
@@ -23,21 +34,17 @@
           <ul id="nav-mobile" class="left hide-on-med-and-down">
             <li><a href="/">Home</a></li>
             <% if user_signed_in? %>
-              <li><a class="dropdown-button" href="#!" data-activates="dropdown-categorie">Categories<i class="material-icons right">arrow_drop_down</i></a></li>
+              <li><a class="dropdown-button" href="#!" data-activates="dropdown-categorie-mobile">Categories<i class="material-icons right">arrow_drop_down</i></a></li>
               <li><a rel="nofollow" data-method="delete" href="/users/sign_out">Log out</a></li>
             <% else %>
               <li><a href="/users/sign_up">Sign up</a></li>
               <li><a href="/users/sign_in">Login</a></li>
             <% end %>
           </ul>
-          <ul class="side-nav" id="mobile-demo">
-            <li><a href="/">Home</a></li>
-            <% if user_signed_in? %>
-              <li><a class="dropdown-button" href="#!" data-activates="dropdown-categorie">Categories<i class="material-icons right">arrow_drop_down</i></a></li>
-              <li><a rel="nofollow" data-method="delete" href="/users/sign_out">Log out</a></li>
-            <% else %>
-              <li><a href="/users/sign_up">Sign up</a></li>
-              <li><a href="/users/sign_in">Login</a></li>
+          <ul id="dropdown-categorie-mobile" class="dropdown-content">
+            <% @menu_categories.each do |categorie| %>
+              <li><a href="/category/<%= categorie["id"] %>"><%= categorie["title"].split(" ")[2] %></a></li>
+              <li class="divider"></li>
             <% end %>
           </ul>
         </div>
